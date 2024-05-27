@@ -18,4 +18,45 @@ This project shows how to deploy an AKS automatic cluster configured with the fo
 
 ## Deployment
 
-You can find Bicep module and Bash scripts to deploy the AKS Automatic cluster via [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the companion [AKS Store](https://github.com/Azure-Samples/aks-store-demo) application. For more information, see [Quickstart: Deploy an Azure Kubernetes Service (AKS) Automatic cluster](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-automatic-deploy?pivots=bicep).
+You can find Bicep module and Bash scripts to deploy the AKS Automatic cluster via [Bicep](https://learn.microsoft.com/en-us/azure/azure-resource-manager/bicep/overview?tabs=bicep) and the companion [AKS Store](https://github.com/Azure-Samples/aks-store-demo) application. You can use the bash script [01-deploy.sh](./bicep/01-deploy.sh) to register the required features flags. For more information, see [Quickstart: Deploy an Azure Kubernetes Service (AKS) Automatic cluster](https://learn.microsoft.com/en-us/azure/aks/learn/quick-kubernetes-automatic-deploy?pivots=bicep).
+
+### Install the aks-preview Azure CLI extension
+
+[!INCLUDE [preview features callout](../includes/preview/preview-callout.md)]
+
+To install the aks-preview extension, run the following command:
+
+```bash
+az extension add --name aks-preview
+```
+
+Run the following command to update to the latest version of the extension released:
+
+```bash
+az extension update --name aks-preview
+```
+
+### Register the feature flags
+
+To use AKS Automatic in preview, you must register feature flags for other required features. Register the following flags using the [az feature register](https://learn.microsoft.com/en-us/cli/azure/feature?view=azure-cli-latest#az-feature-register) command.
+
+```bash
+az feature register --namespace Microsoft.ContainerService --name EnableAPIServerVnetIntegrationPreview
+az feature register --namespace Microsoft.ContainerService --name NRGLockdownPreview
+az feature register --namespace Microsoft.ContainerService --name SafeguardsPreview
+az feature register --namespace Microsoft.ContainerService --name NodeAutoProvisioningPreview
+az feature register --namespace Microsoft.ContainerService --name DisableSSHPreview
+az feature register --namespace Microsoft.ContainerService --name AutomaticSKUPreview
+```
+
+Verify the registration status by using the [az feature show](https://learn.microsoft.com/en-us/cli/azure/feature?view=azure-cli-latest#az-feature-show) command. It takes a few minutes for the status to show *Registered*:
+
+```bash
+az feature show --namespace Microsoft.ContainerService --name AutomaticSKUPreview
+```
+
+When the status reflects *Registered*, refresh the registration of the *Microsoft.ContainerService* resource provider by using the [az provider register](https://learn.microsoft.com/en-us/cli/azure/provider?view=azure-cli-latest#az-provider-register) command:
+
+```bash
+az provider register --namespace Microsoft.ContainerService
+```
