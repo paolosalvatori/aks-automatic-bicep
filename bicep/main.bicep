@@ -210,7 +210,7 @@ resource grafanaAdminRoleAssignment 'Microsoft.Authorization/roleAssignments@202
 
 // Assign the Monitoring Reader role to the Azure Managed Grafana system-assigned managed identity at the workspace scope
 resource monitoringReaderRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name:  guid(grafanaDashboard.name, prometheusWorkspace.name, mmonitoringReaderRole.id)
+  name: guid(grafanaDashboard.name, prometheusWorkspace.name, mmonitoringReaderRole.id)
   scope: prometheusWorkspace
   properties: {
     roleDefinitionId: mmonitoringReaderRole.id
@@ -221,7 +221,7 @@ resource monitoringReaderRoleAssignment 'Microsoft.Authorization/roleAssignments
 
 // Assign the Monitoring Data Reader role to the Azure Managed Grafana system-assigned managed identity at the workspace scope
 resource monitoringDataReaderRoleAssignment 'Microsoft.Authorization/roleAssignments@2022-04-01' = {
-  name:  guid(grafanaDashboard.name, prometheusWorkspace.name, monitoringDataReaderRole.id)
+  name: guid(grafanaDashboard.name, prometheusWorkspace.name, monitoringDataReaderRole.id)
   scope: prometheusWorkspace
   properties: {
     roleDefinitionId: monitoringDataReaderRole.id
@@ -250,6 +250,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-previ
         mode: 'System'
         securityProfile: {
           sshAccess: 'Disabled'
+          enableVTPM: false
+          enableSecureBoot: false
         }
       }
       {
@@ -262,6 +264,8 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-previ
         mode: 'User'
         securityProfile: {
           sshAccess: 'Disabled'
+          enableVTPM: false
+          enableSecureBoot: false
         }
       }
     ]
@@ -293,7 +297,7 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-previ
   }
 }
 
-resource 	azureKubernetesServiceRBACClusterAdmin 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+resource azureKubernetesServiceRBACClusterAdmin 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
   name: 'b1ff04bb-8a4e-4dc4-8eb5-8693973ce19b'
   scope: subscription()
 }
@@ -442,92 +446,92 @@ resource prometheusK8sRules 'Microsoft.AlertsManagement/prometheusRuleGroups@202
     interval: 'PT1M'
     rules: [
       {
-          record: 'node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate'
-          expression: 'sum by (cluster, namespace, pod, container) (irate(container_cpu_usage_seconds_total{job="cadvisor", image!=""}[5m])) * on (cluster, namespace, pod) group_left(node) topk by (cluster, namespace, pod) (1, max by(cluster, namespace, pod, node) (kube_pod_info{node!=""}))'
+        record: 'node_namespace_pod_container:container_cpu_usage_seconds_total:sum_irate'
+        expression: 'sum by (cluster, namespace, pod, container) (irate(container_cpu_usage_seconds_total{job="cadvisor", image!=""}[5m])) * on (cluster, namespace, pod) group_left(node) topk by (cluster, namespace, pod) (1, max by(cluster, namespace, pod, node) (kube_pod_info{node!=""}))'
       }
       {
-          record: 'node_namespace_pod_container:container_memory_working_set_bytes'
-          expression: 'container_memory_working_set_bytes{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
+        record: 'node_namespace_pod_container:container_memory_working_set_bytes'
+        expression: 'container_memory_working_set_bytes{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
       }
       {
-          record: 'node_namespace_pod_container:container_memory_rss'
-          expression: 'container_memory_rss{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
+        record: 'node_namespace_pod_container:container_memory_rss'
+        expression: 'container_memory_rss{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
       }
       {
-          record: 'node_namespace_pod_container:container_memory_cache'
-          expression: 'container_memory_cache{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
+        record: 'node_namespace_pod_container:container_memory_cache'
+        expression: 'container_memory_cache{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
       }
       {
-          record: 'node_namespace_pod_container:container_memory_swap'
-          expression: 'container_memory_swap{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
+        record: 'node_namespace_pod_container:container_memory_swap'
+        expression: 'container_memory_swap{job="cadvisor", image!=""}* on (namespace, pod) group_left(node) topk by(namespace, pod) (1, max by(namespace, pod, node) (kube_pod_info{node!=""}))'
       }
       {
-          record: 'cluster:namespace:pod_memory:active:kube_pod_container_resource_requests'
-          expression: 'kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
+        record: 'cluster:namespace:pod_memory:active:kube_pod_container_resource_requests'
+        expression: 'kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
       }
       {
-          record: 'namespace_memory:kube_pod_container_resource_requests:sum'
-          expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
+        record: 'namespace_memory:kube_pod_container_resource_requests:sum'
+        expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_requests{resource="memory",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
       }
       {
-          record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests'
-          expression: 'kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
+        record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_requests'
+        expression: 'kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
       }
       {
-          record: 'namespace_cpu:kube_pod_container_resource_requests:sum'
-          expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
+        record: 'namespace_cpu:kube_pod_container_resource_requests:sum'
+        expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_requests{resource="cpu",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
       }
       {
-          record: 'cluster:namespace:pod_memory:active:kube_pod_container_resource_limits'
-          expression: 'kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
+        record: 'cluster:namespace:pod_memory:active:kube_pod_container_resource_limits'
+        expression: 'kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ((kube_pod_status_phase{phase=~"Pending|Running"} == 1))'
       }
       {
-          record: 'namespace_memory:kube_pod_container_resource_limits:sum'
-          expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
+        record: 'namespace_memory:kube_pod_container_resource_limits:sum'
+        expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_limits{resource="memory",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
       }
       {
-          record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits'
-          expression: 'kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ( (kube_pod_status_phase{phase=~"Pending|Running"} == 1) )'
+        record: 'cluster:namespace:pod_cpu:active:kube_pod_container_resource_limits'
+        expression: 'kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"} * on (namespace, pod, cluster)group_left() max by (namespace, pod, cluster) ( (kube_pod_status_phase{phase=~"Pending|Running"} == 1) )'
       }
       {
-          record: 'namespace_cpu:kube_pod_container_resource_limits:sum'
-          expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
+        record: 'namespace_cpu:kube_pod_container_resource_limits:sum'
+        expression: 'sum by (namespace, cluster) (sum by (namespace, pod, cluster) (max by (namespace, pod, container, cluster) (kube_pod_container_resource_limits{resource="cpu",job="kube-state-metrics"}) * on(namespace, pod, cluster) group_left() max by (namespace, pod, cluster) (kube_pod_status_phase{phase=~"Pending|Running"} == 1)))'
       }
       {
-          record: 'namespace_workload_pod:kube_pod_owner:relabel'
-          expression: 'max by (cluster, namespace, workload, pod) ((label_replace(label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"}, "replicaset", "$1", "owner_name", "(.*)") * on(replicaset, namespace) group_left(owner_name) topk by(replicaset, namespace) (1, max by (replicaset, namespace, owner_name) (kube_replicaset_owner{job="kube-state-metrics"})), "workload", "$1", "owner_name", "(.*)"  )))'
-          labels: {
-              workload_type: 'deployment'
-          }
+        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        expression: 'max by (cluster, namespace, workload, pod) ((label_replace(label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="ReplicaSet"}, "replicaset", "$1", "owner_name", "(.*)") * on(replicaset, namespace) group_left(owner_name) topk by(replicaset, namespace) (1, max by (replicaset, namespace, owner_name) (kube_replicaset_owner{job="kube-state-metrics"})), "workload", "$1", "owner_name", "(.*)"  )))'
+        labels: {
+          workload_type: 'deployment'
+        }
       }
       {
-          record: 'namespace_workload_pod:kube_pod_owner:relabel'
-          expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"}, "workload", "$1", "owner_name", "(.*)")))'
-          labels: {
-              workload_type: 'daemonset'
-          }
+        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="DaemonSet"}, "workload", "$1", "owner_name", "(.*)")))'
+        labels: {
+          workload_type: 'daemonset'
+        }
       }
       {
-          record: 'namespace_workload_pod:kube_pod_owner:relabel'
-          expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"}, "workload", "$1", "owner_name", "(.*)")))'
-          labels: {
-              workload_type: 'statefulset'
-          }
+        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="StatefulSet"}, "workload", "$1", "owner_name", "(.*)")))'
+        labels: {
+          workload_type: 'statefulset'
+        }
       }
       {
-          record: 'namespace_workload_pod:kube_pod_owner:relabel'
-          expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="Job"}, "workload", "$1", "owner_name", "(.*)")))'
-          labels: {
-              workload_type: 'job'
-          }
+        record: 'namespace_workload_pod:kube_pod_owner:relabel'
+        expression: 'max by (cluster, namespace, workload, pod) ((label_replace(kube_pod_owner{job="kube-state-metrics", owner_kind="Job"}, "workload", "$1", "owner_name", "(.*)")))'
+        labels: {
+          workload_type: 'job'
+        }
       }
       {
-          record: ':node_memory_MemAvailable_bytes:sum'
-          expression: 'sum(node_memory_MemAvailable_bytes{job="node"} or (node_memory_Buffers_bytes{job="node"} + node_memory_Cached_bytes{job="node"} + node_memory_MemFree_bytes{job="node"} + node_memory_Slab_bytes{job="node"})) by (cluster)'
+        record: ':node_memory_MemAvailable_bytes:sum'
+        expression: 'sum(node_memory_MemAvailable_bytes{job="node"} or (node_memory_Buffers_bytes{job="node"} + node_memory_Cached_bytes{job="node"} + node_memory_MemFree_bytes{job="node"} + node_memory_Slab_bytes{job="node"})) by (cluster)'
       }
       {
-          record: 'cluster:node_cpu:ratio_rate5m'
-          expression: 'sum(rate(node_cpu_seconds_total{job="node",mode!="idle",mode!="iowait",mode!="steal"}[5m])) by (cluster) /count(sum(node_cpu_seconds_total{job="node"}) by (cluster, instance, cpu)) by (cluster)'
+        record: 'cluster:node_cpu:ratio_rate5m'
+        expression: 'sum(rate(node_cpu_seconds_total{job="node",mode!="idle",mode!="iowait",mode!="steal"}[5m])) by (cluster) /count(sum(node_cpu_seconds_total{job="node"}) by (cluster, instance, cpu)) by (cluster)'
       }
     ]
   }
