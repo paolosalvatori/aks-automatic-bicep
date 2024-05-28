@@ -248,6 +248,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-previ
         osDiskType: systemAgentPoolOsDiskType
         osType: 'Linux'
         mode: 'System'
+        securityProfile: {
+          sshAccess: 'Disabled'
+        }
       }
       {
         name: userAgentPoolName
@@ -257,6 +260,9 @@ resource aksCluster 'Microsoft.ContainerService/managedClusters@2024-03-02-previ
         osDiskType: userAgentPoolOsDiskType
         osType: 'Linux'
         mode: 'User'
+        securityProfile: {
+          sshAccess: 'Disabled'
+        }
       }
     ]
     addonProfiles: {
