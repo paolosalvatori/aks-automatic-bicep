@@ -6,6 +6,8 @@ This project shows how to deploy an AKS automatic cluster configured with the fo
 - [Azure Managed Grafana](https://learn.microsoft.com/en-us/azure/managed-grafana/overview) for visualization
 - [Container insights](https://learn.microsoft.com/en-us/azure/azure-monitor/containers/container-insights-overview) for log collection
 
+![Architecture](./images/architecture.png)
+
 ## What is Azure Kubernetes Service (AKS) Automatic?
 
 [Azure Kubernetes Service (AKS) Automatic](https://learn.microsoft.com/en-us/azure/aks/intro-aks-automatic) offers an experience that makes the most common tasks on Kubernetes fast and frictionless, while preserving the flexibility, extensibility, and consistency of Kubernetes. Azure takes care of your cluster setup, including node management, scaling, security, and preconfigured settings that follow AKS well-architected recommendations. Automatic clusters dynamically allocate compute resources based on your specific workload requirements and are tuned for running production applications.
